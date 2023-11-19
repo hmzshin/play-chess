@@ -105,7 +105,7 @@ const ChessTable = () => {
   return (
     <div
       id="table"
-      className="flex flex-wrap items-center justify-center w-[650px] m-auto"
+      className="flex flex-wrap items-center justify-center w-[650px] m-auto pt-20"
     >
       {numbers.map((number) => (
         <Square
