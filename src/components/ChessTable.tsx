@@ -4,6 +4,7 @@ import Square from "./Square";
 import useRule from "../hooks/useRook";
 import usePawn from "../hooks/usePawn";
 import useRook from "../hooks/useRook";
+import useKnight from "../hooks/useKnight";
 const numbers: number[] = [];
 for (let i = 1; i < 65; i++) {
   numbers.push(i);
@@ -84,10 +85,11 @@ const ChessTable = () => {
   const [possibleSquares, setPossibleSquares] = useState("");
   const [pawn, setPawn] = usePawn(move);
   const [rook, setRook] = useRook(move);
+  const [knight, setKnight] = useKnight(move);
 
   function clickHandler(value: any) {
     setActive(value);
-    if (table[value] != "empty") {
+    if (table[value] != "empty" && click.fisrtClick == false) {
       setClick({ fisrtClick: true, secondClick: false });
     }
     if (click.fisrtClick == true) {
@@ -96,7 +98,7 @@ const ChessTable = () => {
   }
 
   useEffect(() => {
-    if (click.fisrtClick == true && table[active] != "empty") {
+    if (click.fisrtClick == true) {
       setMove({ id: active, piece: table[active] });
     }
 
@@ -114,6 +116,8 @@ const ChessTable = () => {
       setPawn({ ...move, table: table });
     } else if (move.piece.includes("Rook")) {
       setRook({ ...move, table: table });
+    } else if (move.piece.includes("Knight")) {
+      setKnight({ ...move, table: table });
     }
   }, [move]);
 
@@ -124,6 +128,10 @@ const ChessTable = () => {
   useEffect(() => {
     setPossibleSquares(pawn);
   }, [pawn]);
+
+  useEffect(() => {
+    setPossibleSquares(knight);
+  }, [knight]);
 
   useEffect(() => {
     console.log("bu kareye gidebilir", possibleSquares);

@@ -19,7 +19,7 @@ const usePawn = (initalValue: any) => {
     return newArray;
   };
 
-  // çapraz yeme kuralı ekleme
+  // çapraz yeme kuralı ekle
   // bir birim ileri sonra sağ ve sola hareket
   // eğer bu karelerde karşı tarafın taşı varsa hareket et
   useEffect(() => {
