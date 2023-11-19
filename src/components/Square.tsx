@@ -1,19 +1,31 @@
 import React from "react";
-import rook from "../assets/chess-rook-solid.svg";
-import knight from "../assets/chess-knight-solid.svg";
-import bishop from "../assets/chess-bishop-solid.svg";
-import pawn from "../assets/chess-pawn-solid.svg";
+import blackRook from "../assets/chess-rook-solid.svg";
+import blackKnight from "../assets/chess-knight-solid.svg";
+import blackBishop from "../assets/chess-bishop-solid.svg";
+import blackPawn from "../assets/chess-pawn-solid.svg";
+import blackKing from "../assets/chess-king-solid.svg";
+import blackQueen from "../assets/chess-queen-solid.svg";
+import whiteRook from "../assets/chess-rook-regular.svg";
+import whiteKnight from "../assets/chess-knight-regular.svg";
+import whiteBishop from "../assets/chess-bishop-regular.svg";
+import whitePawn from "../assets/chess-pawn-regular.svg";
+import whiteKing from "../assets/chess-king-regular.svg";
+import whiteQueen from "../assets/chess-queen-regular.svg";
 import empty from "../assets/square-solid.svg";
-import king from "../assets/chess-king-solid.svg";
-import queen from "../assets/chess-queen-solid.svg";
 const svg = {
-  rook: rook,
-  knight: knight,
-  bishop: bishop,
-  pawn: pawn,
   empty: empty,
-  king: king,
-  queen: queen,
+  blackRook: blackRook,
+  blackKnight: blackKnight,
+  blackBishop: blackBishop,
+  blackPawn: blackPawn,
+  blackKing: blackKing,
+  blackQueen: blackQueen,
+  whiteRook: whiteRook,
+  whiteKnight: whiteKnight,
+  whiteBishop: whiteBishop,
+  whitePawn: whitePawn,
+  whiteKing: whiteKing,
+  whiteQueen: whiteQueen,
 };
 
 const Square = ({ id, clickHandler, active, table, click }) => {
