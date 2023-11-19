@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./ChessTable.css";
 import Square from "./Square";
+import useRule from "../hooks/useRule";
 const numbers: number[] = [];
 for (let i = 1; i < 65; i++) {
   numbers.push(i);
@@ -77,7 +78,8 @@ const ChessTable = () => {
   const [table, setTable] = useState(initialTable);
   const [active, setActive] = useState("");
   const [click, setClick] = useState({ fisrtClick: false, secondClick: false });
-  const [move, setMove] = useState({ key: "", value: "" });
+  const [move, setMove] = useState({ id: "", piece: "" });
+  const [possibleSquares, setPossibleSquares] = useRule(move);
 
   function clickHandler(value: any) {
     setActive(value);
@@ -90,17 +92,26 @@ const ChessTable = () => {
   }
 
   useEffect(() => {
-    if (click.fisrtClick == true && table[active]) {
-      setMove({ key: active, value: table[active] });
+    if (click.fisrtClick == true && table[active] != "empty") {
+      setMove({ id: active, piece: table[active] });
     }
-    if (click.secondClick == true) {
+
+    if (click.secondClick == true && possibleSquares.includes(active)) {
       const copy = { ...table };
-      copy[move.key] = "empty";
-      copy[active] = move.value;
+      copy[move.id] = "empty";
+      copy[active] = move.piece;
       setTable(copy);
     }
-    console.log(click);
+    console.log(click, active);
   }, [click]);
+
+  useEffect(() => {
+    setPossibleSquares({ ...move, table: table });
+  }, [move]);
+
+  useEffect(() => {
+    console.log("bu kareye gidebilir", possibleSquares);
+  }, [possibleSquares]);
 
   return (
     <div
