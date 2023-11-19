@@ -5,7 +5,7 @@ for (let i = 1; i < 65; i++) {
   numbers.push(i);
 }
 
-const useRule = (initalValue: any) => {
+const useRook = (initalValue: any) => {
   const [state, setState] = useState(initalValue);
   const [possibleSquares, setPossibleSquares] = useState(initialArr);
 
@@ -35,13 +35,7 @@ const useRule = (initalValue: any) => {
   };
 
   useEffect(() => {
-    if (state.piece == "whitePawn") {
-      const copy = { ...state };
-      console.log(`${state.table[state.id]} seçildi`);
-      setPossibleSquares([copy.id - 8, copy.id - 16]);
-    }
-
-    if (state.piece == "whiteRook") {
+    if (state.piece.includes("Rook")) {
       const copy = { ...state };
       const squaresX = [];
       let possibleY: number[] = [];
@@ -148,8 +142,6 @@ const useRule = (initalValue: any) => {
     }
   }, [state]);
 
-  useEffect(() => {}, [possibleSquares]);
-
   function changeHandler(val: object) {
     setState(val);
   }
@@ -157,4 +149,4 @@ const useRule = (initalValue: any) => {
   return [possibleSquares, changeHandler];
 };
 
-export default useRule;
+export default useRook;
