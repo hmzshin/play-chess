@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./ChessTable.css";
 import Square from "./Square";
-import useRule from "../hooks/useRook";
 import usePawn from "../hooks/usePawn";
 import useRook from "../hooks/useRook";
 import useKnight from "../hooks/useKnight";
@@ -89,10 +88,13 @@ const ChessTable = () => {
 
   function clickHandler(value: any) {
     setActive(value);
-    if (table[value] != "empty" && click.fisrtClick == false) {
-      setClick({ fisrtClick: true, secondClick: false });
-    }
-    if (click.fisrtClick == true) {
+    if (table[value] != "empty") {
+      if (possibleSquares.includes(value)) {
+        setClick({ fisrtClick: false, secondClick: true });
+      } else {
+        setClick({ fisrtClick: true, secondClick: false });
+      }
+    } else {
       setClick({ fisrtClick: false, secondClick: true });
     }
   }
@@ -107,6 +109,7 @@ const ChessTable = () => {
       copy[move.id] = "empty";
       copy[active] = move.piece;
       setTable(copy);
+      setPossibleSquares("");
     }
     console.log(click, active);
   }, [click]);
@@ -149,7 +152,7 @@ const ChessTable = () => {
           clickHandler={clickHandler}
           active={active}
           table={table}
-          click={click}
+          possible={possibleSquares}
         />
       ))}
     </div>
