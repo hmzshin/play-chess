@@ -11,9 +11,8 @@ import whiteBishop from "../assets/chess-bishop-regular.svg";
 import whitePawn from "../assets/chess-pawn-regular.svg";
 import whiteKing from "../assets/chess-king-regular.svg";
 import whiteQueen from "../assets/chess-queen-regular.svg";
-import empty from "../assets/square-solid.svg";
+
 const svg = {
-  empty: empty,
   blackRook: blackRook,
   blackKnight: blackKnight,
   blackBishop: blackBishop,
@@ -28,14 +27,18 @@ const svg = {
   whiteQueen: whiteQueen,
 };
 
-const Square = ({ id, clickHandler, active, table, click }) => {
+const Square = ({ id, clickHandler, active, table, possible }) => {
   return (
     <div
       id={id}
-      className={`square ${active == id ? "bg-lime-400" : ""}`}
+      className={`square ${active == id ? "bg-lime-400" : ""} ${
+        possible.includes(id) ? "border-4 border-green-600" : ""
+      } `}
       onClick={() => clickHandler(id)}
     >
-      <img className="w-full h-full" src={svg[table[id]]} />
+      {table[id] != "empty" && (
+        <img className="w-full h-full" src={svg[table[id]]} />
+      )}
     </div>
   );
 };
