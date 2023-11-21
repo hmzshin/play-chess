@@ -6,6 +6,7 @@ import usePawn from "../hooks/usePawn";
 import useRook from "../hooks/useRook";
 import useKnight from "../hooks/useKnight";
 import useBishop from "../hooks/useBishop";
+import useQueen from "../hooks/useQueen";
 
 const ChessTable = () => {
   const [table, setTable] = useState(initialTable);
@@ -17,6 +18,7 @@ const ChessTable = () => {
   const [rook, setRook] = useRook(move);
   const [knight, setKnight] = useKnight(move);
   const [bishop, setBishop] = useBishop(move);
+  const [queen, setQueen] = useQueen(move);
 
   function clickHandler(value: any) {
     setActive(value);
@@ -55,6 +57,8 @@ const ChessTable = () => {
       setKnight({ ...move, table: table });
     } else if (move.piece.includes("Bishop")) {
       setBishop({ ...move, table: table });
+    } else if (move.piece.includes("Queen")) {
+      setQueen({ ...move, table: table });
     }
   }, [move]);
 
@@ -73,6 +77,10 @@ const ChessTable = () => {
   useEffect(() => {
     setPossibleSquares(bishop);
   }, [bishop]);
+
+  useEffect(() => {
+    setPossibleSquares(queen);
+  }, [queen]);
 
   useEffect(() => {
     console.log("bu kareye gidebilir", possibleSquares);
