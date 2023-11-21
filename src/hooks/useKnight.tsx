@@ -4,14 +4,7 @@ const numbers: number[] = [];
 for (let i = 1; i < 65; i++) {
   numbers.push(i);
 }
-const chessboard = {};
-let count = 1;
-for (let i = 1; i < 9; i++) {
-  for (let j = 1; j < 9; j++) {
-    chessboard[count] = [i, j];
-    count++;
-  }
-}
+import { chessboard } from "../data";
 
 const useKnight = (initalValue: any) => {
   const [state, setState] = useState(initalValue);
