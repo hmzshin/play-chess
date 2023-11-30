@@ -1,1 +1,1 @@
-this is my personal blog
+this is an personal chess project
