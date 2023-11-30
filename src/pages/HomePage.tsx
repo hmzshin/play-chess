@@ -4,7 +4,6 @@ const HomePage = () => {
   return (
     <>
       <Header />
-      <div className="italic">Merhaba bu benim ilk vite projem</div>
     </>
   );
 };
