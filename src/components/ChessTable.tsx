@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./ChessTable.css";
 import { initialTable, numbers } from "../data";
 import Square from "./Square";
@@ -8,24 +8,29 @@ import useKnight from "../hooks/useKnight";
 import useBishop from "../hooks/useBishop";
 import useQueen from "../hooks/useQueen";
 import useKing from "../hooks/useKing";
+import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
+import { toast } from "react-toastify";
 
 const ChessTable = () => {
   const [table, setTable] = useState(initialTable);
   const [active, setActive] = useState("");
   const [click, setClick] = useState({ fisrtClick: false, secondClick: false });
   const [move, setMove] = useState({ id: "", piece: "" });
-  const [possibleSquares, setPossibleSquares] = useState("");
-  const [pawn, setPawn] = usePawn(move);
-  const [rook, setRook] = useRook(move);
-  const [knight, setKnight] = useKnight(move);
-  const [bishop, setBishop] = useBishop(move);
-  const [queen, setQueen] = useQueen(move);
-  const [king, setKing] = useKing(move);
+  const [pawn] = usePawn(move);
+  const [rook] = useRook(move);
+  const [knight] = useKnight(move);
+  const [queen] = useQueen(move);
+  const [king] = useKing(move);
+  const [bishop] = useBishop(move);
+  const [turn, setTurn] = useState("white");
+  const { possibleMoves, dispatchPossibleMoves }: any = useContext(
+    PossibleMovesContextObject
+  );
 
   function clickHandler(value: any) {
     setActive(value);
     if (table[value] != "empty") {
-      if (possibleSquares.includes(value)) {
+      if (possibleMoves.includes(value)) {
         setClick({ fisrtClick: false, secondClick: true });
       } else {
         setClick({ fisrtClick: true, secondClick: false });
@@ -38,61 +43,50 @@ const ChessTable = () => {
   useEffect(() => {
     if (click.fisrtClick == true) {
       setMove({ id: active, piece: table[active] });
-    }
-
-    if (click.secondClick == true && possibleSquares.includes(active)) {
+    } else if (
+      click.secondClick == true &&
+      possibleMoves.includes(active) &&
+      move.piece.includes(turn)
+    ) {
       const copy = { ...table };
       copy[move.id] = "empty";
       copy[active] = move.piece;
       setTable(copy);
-      setPossibleSquares("");
+      dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
+      setTurn(turn == "white" ? "black" : "white");
+      console.log("burada sırayı ayarlayabillirim,", move.piece);
+    } else if (
+      click.secondClick == true &&
+      possibleMoves.includes(active) &&
+      !move.piece.includes(turn)
+    ) {
+      toast.warn(`It's ${turn} turn`);
+      dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
+    } else {
+      dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
     }
-    console.log(click, active);
+
+    if (move.piece.includes(turn)) {
+    }
+
+    console.log("turn", turn);
   }, [click]);
 
   useEffect(() => {
     if (move.piece.includes("Pawn")) {
-      setPawn({ ...move, table: table });
+      pawn({ ...move, table: table });
     } else if (move.piece.includes("Rook")) {
-      setRook({ ...move, table: table });
+      rook({ ...move, table: table });
     } else if (move.piece.includes("Knight")) {
-      setKnight({ ...move, table: table });
+      knight({ ...move, table: table });
     } else if (move.piece.includes("Bishop")) {
-      setBishop({ ...move, table: table });
+      bishop({ ...move, table: table });
     } else if (move.piece.includes("Queen")) {
-      setQueen({ ...move, table: table });
+      queen({ ...move, table: table });
     } else if (move.piece.includes("King")) {
-      setKing({ ...move, table: table });
+      king({ ...move, table: table });
     }
   }, [move]);
-
-  useEffect(() => {
-    setPossibleSquares(rook);
-  }, [rook]);
-
-  useEffect(() => {
-    setPossibleSquares(pawn);
-  }, [pawn]);
-
-  useEffect(() => {
-    setPossibleSquares(knight);
-  }, [knight]);
-
-  useEffect(() => {
-    setPossibleSquares(bishop);
-  }, [bishop]);
-
-  useEffect(() => {
-    setPossibleSquares(queen);
-  }, [queen]);
-
-  useEffect(() => {
-    setPossibleSquares(king);
-  }, [king]);
-
-  useEffect(() => {
-    console.log("bu kareye gidebilir", possibleSquares);
-  }, [possibleSquares]);
 
   return (
     <div
@@ -106,7 +100,7 @@ const ChessTable = () => {
           clickHandler={clickHandler}
           active={active}
           table={table}
-          possible={possibleSquares}
+          possible={possibleMoves}
         />
       ))}
     </div>

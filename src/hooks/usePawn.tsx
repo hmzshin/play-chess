@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
 const initialArr: any = [];
 const numbers: number[] = [];
 for (let i = 1; i < 65; i++) {
@@ -7,7 +8,7 @@ for (let i = 1; i < 65; i++) {
 
 const usePawn = (initalValue: any) => {
   const [state, setState] = useState(initalValue);
-  const [possibleSquares, setPossibleSquares] = useState(initialArr);
+  const { dispatchPossibleMoves }: any = useContext(PossibleMovesContextObject);
 
   const findEmptySquares = (array: any) => {
     const newArray: string[] = [];
@@ -76,7 +77,10 @@ const usePawn = (initalValue: any) => {
         )
       );
       const final = [...possibleMoves, ...takes];
-      setPossibleSquares(final);
+      dispatchPossibleMoves({
+        type: "SET_POSSIBLE_MOVES",
+        payload: final,
+      });
     }
   }, [state]);
 
@@ -84,7 +88,7 @@ const usePawn = (initalValue: any) => {
     setState(val);
   }
 
-  return [possibleSquares, changeHandler];
+  return [changeHandler];
 };
 
 export default usePawn;

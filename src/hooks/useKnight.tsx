@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-const initialArr: any = [];
+import React, { useContext, useEffect, useState } from "react";
 const numbers: number[] = [];
 for (let i = 1; i < 65; i++) {
   numbers.push(i);
 }
 import { chessboard } from "../data";
+import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
 
 const useKnight = (initalValue: any) => {
   const [state, setState] = useState(initalValue);
-  const [possibleSquares, setPossibleSquares] = useState(initialArr);
+  const { dispatchPossibleMoves }: any = useContext(PossibleMovesContextObject);
 
   const findEmptySquares = (array: any) => {
     const newArray: number[] = [];
@@ -96,8 +96,10 @@ const useKnight = (initalValue: any) => {
             : [square, state.table[square]]
         )
       );
-
-      setPossibleSquares(filterPossibleMove);
+      dispatchPossibleMoves({
+        type: "SET_POSSIBLE_MOVES",
+        payload: filterPossibleMove,
+      });
     }
   }, [state]);
 
@@ -105,7 +107,7 @@ const useKnight = (initalValue: any) => {
     setState(val);
   }
 
-  return [possibleSquares, changeHandler];
+  return [changeHandler];
 };
 
 export default useKnight;
