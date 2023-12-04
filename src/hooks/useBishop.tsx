@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 const initialArr: any = [];
 const numbers: number[] = [];
 for (let i = 1; i < 65; i++) {
@@ -6,10 +6,11 @@ for (let i = 1; i < 65; i++) {
 }
 
 import { chessboard } from "../data";
+import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
 
 const useBishop = (initalValue: any) => {
   const [state, setState] = useState(initalValue);
-  const [possibleSquares, setPossibleSquares] = useState(initialArr);
+  const { dispatchPossibleMoves }: any = useContext(PossibleMovesContextObject);
 
   const findEmptySquares = (array: any) => {
     const newArray: string[] = [];
@@ -124,16 +125,17 @@ const useBishop = (initalValue: any) => {
         ...possibleSouthEast,
         ...possibleSouthWest,
       ];
-
-      setPossibleSquares(possibleMoves);
+      dispatchPossibleMoves({
+        type: "SET_POSSIBLE_MOVES",
+        payload: possibleMoves,
+      });
     }
   }, [state]);
-
-  function changeHandler(val: object) {
-    setState(val);
+  function updateState(value: any) {
+    setState(value);
   }
 
-  return [possibleSquares, changeHandler];
+  return [updateState];
 };
 
 export default useBishop;

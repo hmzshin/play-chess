@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 const initialArr: any = [];
 import { chessboard } from "../data";
+import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
 
 const useKing = (initalValue: any) => {
   const [state, setState] = useState(initalValue);
-  const [possibleSquares, setPossibleSquares] = useState(initialArr);
+  const { dispatchPossibleMoves }: any = useContext(PossibleMovesContextObject);
 
   const findEmptySquares = (array: any) => {
     const newArray: string[] = [];
@@ -98,8 +99,10 @@ const useKing = (initalValue: any) => {
             : [square, state.table[square]]
         )
       );
-
-      setPossibleSquares(possibleMoves);
+      dispatchPossibleMoves({
+        type: "SET_POSSIBLE_MOVES",
+        payload: possibleMoves,
+      });
     }
   }, [state]);
 
@@ -107,7 +110,7 @@ const useKing = (initalValue: any) => {
     setState(val);
   }
 
-  return [possibleSquares, changeHandler];
+  return [changeHandler];
 };
 
 export default useKing;
