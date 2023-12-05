@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import Timer from "./Timer";
 import "./ChessTable.css";
 import { initialTable, numbers } from "../data";
 import Square from "./Square";
@@ -9,8 +11,6 @@ import useBishop from "../hooks/useBishop";
 import useQueen from "../hooks/useQueen";
 import useKing from "../hooks/useKing";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
-import { toast } from "react-toastify";
-import Timer from "./Timer";
 
 const ChessTable = () => {
   const [table, setTable] = useState(initialTable);

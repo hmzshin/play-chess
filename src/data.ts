@@ -1,3 +1,31 @@
+import blackRook from "./assets/chess-rook-solid.svg";
+import blackKnight from "./assets/chess-knight-solid.svg";
+import blackBishop from "./assets/chess-bishop-solid.svg";
+import blackPawn from "./assets/chess-pawn-solid.svg";
+import blackKing from "./assets/chess-king-solid.svg";
+import blackQueen from "./assets/chess-queen-solid.svg";
+import whiteRook from "./assets/chess-rook-regular.svg";
+import whiteKnight from "./assets/chess-knight-regular.svg";
+import whiteBishop from "./assets/chess-bishop-regular.svg";
+import whitePawn from "./assets/chess-pawn-regular.svg";
+import whiteKing from "./assets/chess-king-regular.svg";
+import whiteQueen from "./assets/chess-queen-regular.svg";
+
+export const svg = {
+  blackRook: blackRook,
+  blackKnight: blackKnight,
+  blackBishop: blackBishop,
+  blackPawn: blackPawn,
+  blackKing: blackKing,
+  blackQueen: blackQueen,
+  whiteRook: whiteRook,
+  whiteKnight: whiteKnight,
+  whiteBishop: whiteBishop,
+  whitePawn: whitePawn,
+  whiteKing: whiteKing,
+  whiteQueen: whiteQueen,
+};
+
 export const chessboard = {};
 let count = 1;
 for (let i = 1; i < 9; i++) {
