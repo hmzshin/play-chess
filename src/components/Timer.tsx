@@ -29,7 +29,7 @@ const Timer = ({ turn, isMoved }) => {
 
       return () => clearInterval(timerId);
     }
-  }, [turn,isMoved]);
+  }, [turn, isMoved]);
 
   const formatTime = (milliseconds: number) => {
     const minutes: number = Math.floor(milliseconds / 60000);
@@ -38,7 +38,7 @@ const Timer = ({ turn, isMoved }) => {
   };
 
   return (
-    <section className="w-[300px] h-[150px] border border-slate-700 flex">
+    <section className="w-[300px] h-[100px] border border-slate-700 flex">
       {[countWhite, countBlack].map((count) => (
         <div className="w-1/2 bg-indigo-400 border flex justify-center items-center">
           {formatTime(count)}

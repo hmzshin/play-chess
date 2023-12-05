@@ -12,7 +12,6 @@ import useQueen from "../hooks/useQueen";
 import useKing from "../hooks/useKing";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
 
-
 const ChessTable = () => {
   const [table, setTable] = useState(initialTable);
   const [active, setActive] = useState("");
@@ -28,7 +27,7 @@ const ChessTable = () => {
   const { possibleMoves, dispatchPossibleMoves }: any = useContext(
     PossibleMovesContextObject
   );
-const [isMoved,setIsMoved] = useState(false)
+  const [isMoved, setIsMoved] = useState(false);
   function clickHandler(value: any) {
     setActive(value);
     if (table[value] != "empty") {
@@ -54,10 +53,10 @@ const [isMoved,setIsMoved] = useState(false)
       copy[move.id] = "empty";
       copy[active] = move.piece;
       setTable(copy);
-      if(isMoved == false){
-        setIsMoved(true)
+      if (isMoved == false) {
+        setIsMoved(true);
       }
-      
+
       dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
       setTurn(turn == "white" ? "black" : "white");
     } else if (
@@ -91,10 +90,10 @@ const [isMoved,setIsMoved] = useState(false)
   }, [move]);
 
   return (
-    <div className="flex items-center justify-center px-[5%]">
+    <div className="flex items-center justify-center flex-wrap gap-20 p-[5%]">
       <div
         id="table"
-        className="flex flex-wrap items-center justify-center w-[650px] m-auto pt-20"
+        className="flex flex-wrap items-center justify-center w-[350px] md:w-[650px]"
       >
         {numbers.map((number) => (
           <Square
@@ -107,7 +106,7 @@ const [isMoved,setIsMoved] = useState(false)
           />
         ))}
       </div>
-      <Timer turn={turn} isMoved={isMoved}/>
+      <Timer turn={turn} isMoved={isMoved} />
     </div>
   );
 };
