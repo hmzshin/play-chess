@@ -12,6 +12,7 @@ import useQueen from "../hooks/useQueen";
 import useKing from "../hooks/useKing";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
 
+
 const ChessTable = () => {
   const [table, setTable] = useState(initialTable);
   const [active, setActive] = useState("");
@@ -27,7 +28,7 @@ const ChessTable = () => {
   const { possibleMoves, dispatchPossibleMoves }: any = useContext(
     PossibleMovesContextObject
   );
-
+const [isMoved,setIsMoved] = useState(false)
   function clickHandler(value: any) {
     setActive(value);
     if (table[value] != "empty") {
@@ -53,9 +54,12 @@ const ChessTable = () => {
       copy[move.id] = "empty";
       copy[active] = move.piece;
       setTable(copy);
+      if(isMoved == false){
+        setIsMoved(true)
+      }
+      
       dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
       setTurn(turn == "white" ? "black" : "white");
-      console.log("burada sırayı ayarlayabillirim,", move.piece);
     } else if (
       click.secondClick == true &&
       possibleMoves.includes(active) &&
@@ -103,7 +107,7 @@ const ChessTable = () => {
           />
         ))}
       </div>
-      <Timer turn={turn} />
+      <Timer turn={turn} isMoved={isMoved}/>
     </div>
   );
 };
