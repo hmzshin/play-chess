@@ -10,6 +10,7 @@ import useQueen from "../hooks/useQueen";
 import useKing from "../hooks/useKing";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
 import { toast } from "react-toastify";
+import Timer from "./Timer";
 
 const ChessTable = () => {
   const [table, setTable] = useState(initialTable);
@@ -66,9 +67,6 @@ const ChessTable = () => {
       dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
     }
 
-    if (move.piece.includes(turn)) {
-    }
-
     console.log("turn", turn);
   }, [click]);
 
@@ -89,20 +87,23 @@ const ChessTable = () => {
   }, [move]);
 
   return (
-    <div
-      id="table"
-      className="flex flex-wrap items-center justify-center w-[650px] m-auto pt-20"
-    >
-      {numbers.map((number) => (
-        <Square
-          key={number}
-          id={number}
-          clickHandler={clickHandler}
-          active={active}
-          table={table}
-          possible={possibleMoves}
-        />
-      ))}
+    <div className="flex items-center justify-center px-[5%]">
+      <div
+        id="table"
+        className="flex flex-wrap items-center justify-center w-[650px] m-auto pt-20"
+      >
+        {numbers.map((number) => (
+          <Square
+            key={number}
+            id={number}
+            clickHandler={clickHandler}
+            active={active}
+            table={table}
+            possible={possibleMoves}
+          />
+        ))}
+      </div>
+      <Timer turn={turn} />
     </div>
   );
 };
