@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 
 const Timer = ({ turn, isMoved }) => {
-  const [countWhite, setCountWhite] = useState(3 * 60 * 1000);
-  const [countBlack, setCountBlack] = useState(60 * 1000);
+  const [countWhite, setCountWhite] = useState(5 * 60 * 1000);
+  const [countBlack, setCountBlack] = useState(5 * 60 * 1000);
+
+  const players = [
+    { player: " White", timer: countBlack },
+    { player: " Black", timer: countWhite },
+  ];
   useEffect(() => {
     if (isMoved) {
       const timerId = setInterval(() => {
@@ -39,9 +44,10 @@ const Timer = ({ turn, isMoved }) => {
 
   return (
     <section className="w-[300px] h-[100px] border border-slate-700 flex">
-      {[countWhite, countBlack].map((count) => (
-        <div className="w-1/2 bg-indigo-400 border flex justify-center items-center">
-          {formatTime(count)}
+      {players.map((player) => (
+        <div className="w-1/2 bg-indigo-400 border flex flex-col justify-center items-center">
+          <p>{player.player}</p>
+          {formatTime(player.timer)}
         </div>
       ))}
     </section>
