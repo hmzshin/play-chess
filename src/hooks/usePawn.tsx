@@ -1,33 +1,35 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
-const initialArr: any = [];
-const numbers: number[] = [];
-for (let i = 1; i < 65; i++) {
-  numbers.push(i);
+
+type PieceType = "Pawn" | string;
+type SquareType = "empty" | string;
+type Table = Record<number, string>;
+
+interface PawnState {
+  id: number;
+  table: Table;
+  piece: PieceType;
 }
 
-const usePawn = (initalValue: any) => {
-  const [state, setState] = useState(initalValue);
-  const { dispatchPossibleMoves }: any = useContext(PossibleMovesContextObject);
+const usePawn = (initialValue: PawnState) => {
+  const [state, setState] = useState<PawnState>(initialValue);
+  const { dispatchPossibleMoves } = useContext(PossibleMovesContextObject);
 
-  const findEmptySquares = (array: any) => {
-    const newArray: string[] = [];
+  const findEmptySquares = (array: [number, SquareType][]): number[] => {
+    const newArray: number[] = [];
     for (let i = 0; i < array.length; i++) {
-      if (array[i][1] == "empty") {
+      if (array[i][1] === "empty") {
         newArray.push(array[i][0]);
       }
     }
     return newArray;
   };
 
-  // çapraz yeme kuralı ekle
-  // bir birim ileri sonra sağ ve sola hareket
-  // eğer bu karelerde karşı tarafın taşı varsa hareket et
   useEffect(() => {
     if (state.piece.includes("Pawn")) {
-      console.log(`${state.table[state.id]} seçildi`);
-      let possibleMove: any[] = [];
-      const possibleTakes: any[] = [];
+      console.log(`${state.table[state.id]} is selected`);
+      let possibleMove: number[] = [];
+      const possibleTakes: number[] = [];
       const copy = { ...state };
       if (state.piece.includes("white")) {
         if ([49, 50, 51, 52, 53, 54, 55, 56].includes(state.id)) {
@@ -71,7 +73,7 @@ const usePawn = (initalValue: any) => {
 
       const possibleMoves = findEmptySquares(
         possibleMove.map((square) =>
-          state.table[square] == "empty"
+          state.table[square] === "empty"
             ? [square, "empty"]
             : [square, state.table[square]]
         )
@@ -82,13 +84,13 @@ const usePawn = (initalValue: any) => {
         payload: final,
       });
     }
-  }, [state]);
+  }, [state, dispatchPossibleMoves]);
 
-  function changeHandler(val: object) {
+  function changeHandler(val: PawnState) {
     setState(val);
   }
 
-  return [changeHandler];
+  return [changeHandler] as const;
 };
 
 export default usePawn;

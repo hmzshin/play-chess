@@ -1,27 +1,37 @@
 import React, { useContext, useEffect, useState } from "react";
-const initialArr: any = [];
 import { chessboard } from "../data";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
 
-const useKing = (initalValue: any) => {
-  const [state, setState] = useState(initalValue);
-  const { dispatchPossibleMoves }: any = useContext(PossibleMovesContextObject);
+type PieceType = "King" | string;
+type SquareType = "empty" | string;
+type Coordinate = [number, number];
+type Table = Record<number, string>;
 
-  const findEmptySquares = (array: any) => {
-    const newArray: string[] = [];
+interface KingState {
+  id: number;
+  table: Table;
+  piece: PieceType;
+}
+
+const useKing = (initialValue: KingState) => {
+  const [state, setState] = useState<KingState>(initialValue);
+  const { dispatchPossibleMoves } = useContext(PossibleMovesContextObject);
+
+  const findEmptySquares = (array: [number, SquareType][]): number[] => {
+    const newArray: number[] = [];
 
     for (let i = 0; i < array.length; i++) {
-      if (array[i][1] == "empty") {
+      if (array[i][1] === "empty") {
         newArray.push(array[i][0]);
       } else {
         if (array[i][1].includes("black") && state.piece.includes("white")) {
-          console.log("önümde siyah taş var", state.piece);
+          console.log("There is a black piece in front of me", state.piece);
           newArray.push(array[i][0]);
         } else if (
           array[i][1].includes("white") &&
           state.piece.includes("black")
         ) {
-          console.log("önümde beyaz taş var", state.piece);
+          console.log("There is a white piece in front of me", state.piece);
           newArray.push(array[i][0]);
         }
       }
@@ -29,24 +39,27 @@ const useKing = (initalValue: any) => {
     return newArray;
   };
 
-  const coordinateToIndex = (array: number[]) => {
-    return array.map((coordinate: any) => {
+  const coordinateToIndex = (array: Coordinate[]): number[] => {
+    return array.map((coordinate) => {
       for (const key in chessboard) {
         if (
-          coordinate[0] == chessboard[key][0] &&
-          coordinate[1] == chessboard[key][1]
-        )
+          coordinate[0] === chessboard[key][0] &&
+          coordinate[1] === chessboard[key][1]
+        ) {
           return Number(key);
+        }
       }
+      return -1;
     });
   };
+
   useEffect(() => {
     if (state.piece.includes("King")) {
-      console.log(`${state.table[state.id]} seçildi`);
+      console.log(`${state.table[state.id]} is selected`);
 
       let x = chessboard[state.id][0];
       let y = chessboard[state.id][1];
-      const moves: any[] = [];
+      const moves: Coordinate[] = [];
       let x1 = x + 1;
       let y1 = y + 1;
       let x2 = x + 1;
@@ -94,7 +107,7 @@ const useKing = (initalValue: any) => {
 
       const possibleMoves = findEmptySquares(
         coordinateToIndex(moves).map((square: any) =>
-          state.table[square] == "empty"
+          state.table[square] === "empty"
             ? [square, "empty"]
             : [square, state.table[square]]
         )
@@ -104,13 +117,13 @@ const useKing = (initalValue: any) => {
         payload: possibleMoves,
       });
     }
-  }, [state]);
+  }, [state, dispatchPossibleMoves]);
 
-  function changeHandler(val: object) {
+  function changeHandler(val: KingState) {
     setState(val);
   }
 
-  return [changeHandler];
+  return [changeHandler] as const;
 };
 
 export default useKing;

@@ -12,25 +12,53 @@ import useQueen from "../hooks/useQueen";
 import useKing from "../hooks/useKing";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
 
-const ChessTable = () => {
-  const [table, setTable] = useState(initialTable);
-  const [active, setActive] = useState("");
-  const [click, setClick] = useState({ fisrtClick: false, secondClick: false });
-  const [move, setMove] = useState({ id: "", piece: "" });
+type Table = Record<number, string>;
+
+type PieceType =
+  | "King"
+  | "Queen"
+  | "Bishop"
+  | "King"
+  | "Pawn"
+  | "Knight"
+  | "Rook"
+  | string;
+interface Move {
+  id: number;
+  table: Table;
+  piece: PieceType;
+}
+
+const ChessTable: React.FC = () => {
+  const [table, setTable] = useState<Table>(initialTable);
+  const [active, setActive] = useState<number>(0);
+  const [click, setClick] = useState<{
+    fisrtClick: boolean;
+    secondClick: boolean;
+  }>({
+    fisrtClick: false,
+    secondClick: false,
+  });
+  const [move, setMove] = useState<Move>({
+    id: 0,
+    piece: "",
+    table: initialTable,
+  });
   const [pawn] = usePawn(move);
   const [rook] = useRook(move);
   const [knight] = useKnight(move);
   const [queen] = useQueen(move);
   const [king] = useKing(move);
   const [bishop] = useBishop(move);
-  const [turn, setTurn] = useState("white");
-  const { possibleMoves, dispatchPossibleMoves }: any = useContext(
+  const [turn, setTurn] = useState<string>("white");
+  const { possibleMoves, dispatchPossibleMoves } = useContext(
     PossibleMovesContextObject
   );
-  const [isMoved, setIsMoved] = useState(false);
-  function clickHandler(value: any) {
+  const [isMoved, setIsMoved] = useState<boolean>(false);
+
+  function clickHandler(value: number) {
     setActive(value);
-    if (table[value] != "empty") {
+    if (table[value] !== "empty") {
       if (possibleMoves.includes(value)) {
         setClick({ fisrtClick: false, secondClick: true });
       } else {
@@ -42,25 +70,24 @@ const ChessTable = () => {
   }
 
   useEffect(() => {
-    if (click.fisrtClick == true) {
-      setMove({ id: active, piece: table[active] });
+    if (click.fisrtClick === true) {
+      setMove({ id: active, piece: table[active], table });
     } else if (
-      click.secondClick == true &&
+      click.secondClick === true &&
       possibleMoves.includes(active) &&
       move.piece.includes(turn)
     ) {
-      const copy = { ...table };
+      const copy: Table = { ...table };
       copy[move.id] = "empty";
       copy[active] = move.piece;
       setTable(copy);
-      if (isMoved == false) {
+      if (!isMoved) {
         setIsMoved(true);
       }
-
       dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
-      setTurn(turn == "white" ? "black" : "white");
+      setTurn(turn === "white" ? "black" : "white");
     } else if (
-      click.secondClick == true &&
+      click.secondClick === true &&
       possibleMoves.includes(active) &&
       !move.piece.includes(turn)
     ) {
@@ -88,6 +115,10 @@ const ChessTable = () => {
       king({ ...move, table: table });
     }
   }, [move]);
+
+  useEffect(() => {
+    console.log(table);
+  }, [table]);
 
   return (
     <div className="flex items-center justify-center flex-wrap gap-20 p-[5%]">

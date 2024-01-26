@@ -1,20 +1,25 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
-const initialArr: any = [];
-const numbers: number[] = [];
-for (let i = 1; i < 65; i++) {
-  numbers.push(i);
+
+type PieceType = "Rook" | string;
+type SquareType = "empty" | string;
+type Table = Record<number, string>;
+
+interface RookState {
+  id: number;
+  table: Table;
+  piece: PieceType;
 }
 
-const useRook = (initalValue: any) => {
-  const [state, setState] = useState(initalValue);
-  const { dispatchPossibleMoves }: any = useContext(PossibleMovesContextObject);
+const useRook = (initialValue: RookState) => {
+  const [state, setState] = useState<RookState>(initialValue);
+  const { dispatchPossibleMoves } = useContext(PossibleMovesContextObject);
 
-  const findEmptySquares = (array: any) => {
-    const newArray: string[] = [];
+  const findEmptySquares = (array: [number, SquareType][]): number[] => {
+    const newArray: number[] = [];
 
     for (let i = 0; i < array.length; i++) {
-      if (array[i][1] == "empty") {
+      if (array[i][1] === "empty") {
         newArray.push(array[i][0]);
       } else {
         if (array[i][1].includes("black") && state.piece.includes("white")) {
@@ -38,49 +43,49 @@ const useRook = (initalValue: any) => {
   useEffect(() => {
     if (state.piece.includes("Rook")) {
       const copy = { ...state };
-      const squaresX = [];
+      const squaresX: number[] = [];
       let possibleY: number[] = [];
 
       for (let i = 1; i < 8; i++) {
         squaresX.push(i * 8);
       }
 
-      const possibleX = [...squaresX].map((square: any) => {
-        return (copy.id + square) % 64 == 0 ? 64 : (copy.id + square) % 64;
+      const possibleX = [...squaresX].map((square) => {
+        return (copy.id + square) % 64 === 0 ? 64 : (copy.id + square) % 64;
       });
 
       if (state.id <= 8) {
         possibleY = [1, 2, 3, 4, 5, 6, 7, 8].filter(
-          (square) => state.id != square
+          (square) => state.id !== square
         );
       } else if (state.id <= 16) {
         possibleY = [1, 2, 3, 4, 5, 6, 7, 8]
           .map((number) => number + 8)
-          .filter((square) => state.id != square);
+          .filter((square) => state.id !== square);
       } else if (state.id <= 24) {
         possibleY = [1, 2, 3, 4, 5, 6, 7, 8]
           .map((number) => number + 16)
-          .filter((square) => state.id != square);
+          .filter((square) => state.id !== square);
       } else if (state.id <= 32) {
         possibleY = [1, 2, 3, 4, 5, 6, 7, 8]
           .map((number) => number + 24)
-          .filter((square) => state.id != square);
+          .filter((square) => state.id !== square);
       } else if (state.id <= 40) {
         possibleY = [1, 2, 3, 4, 5, 6, 7, 8]
           .map((number) => number + 32)
-          .filter((square) => state.id != square);
+          .filter((square) => state.id !== square);
       } else if (state.id <= 48) {
         possibleY = [1, 2, 3, 4, 5, 6, 7, 8]
           .map((number) => number + 40)
-          .filter((square) => state.id != square);
+          .filter((square) => state.id !== square);
       } else if (state.id <= 56) {
         possibleY = [1, 2, 3, 4, 5, 6, 7, 8]
           .map((number) => number + 48)
-          .filter((square) => state.id != square);
+          .filter((square) => state.id !== square);
       } else {
         possibleY = [1, 2, 3, 4, 5, 6, 7, 8]
           .map((number) => number + 56)
-          .filter((square) => state.id != square);
+          .filter((square) => state.id !== square);
       }
 
       const possibleSquaresOnRight = findEmptySquares(
@@ -88,7 +93,7 @@ const useRook = (initalValue: any) => {
           .filter((square) => square > state.id)
           .sort((a, b) => a - b)
           .map((square) =>
-            state.table[square] == "empty"
+            state.table[square] === "empty"
               ? [square, "empty"]
               : [square, state.table[square]]
           )
@@ -101,7 +106,7 @@ const useRook = (initalValue: any) => {
           .filter((square) => square < state.id)
           .sort((a, b) => b - a)
           .map((square) =>
-            state.table[square] == "empty"
+            state.table[square] === "empty"
               ? [square, "empty"]
               : [square, state.table[square]]
           )
@@ -113,7 +118,7 @@ const useRook = (initalValue: any) => {
           .filter((square) => square < state.id)
           .sort((a, b) => b - a)
           .map((square) =>
-            state.table[square] == "empty"
+            state.table[square] === "empty"
               ? [square, "empty"]
               : [square, state.table[square]]
           )
@@ -125,7 +130,7 @@ const useRook = (initalValue: any) => {
           .filter((square) => square > state.id)
           .sort((a, b) => a - b)
           .map((square) =>
-            state.table[square] == "empty"
+            state.table[square] === "empty"
               ? [square, "empty"]
               : [square, state.table[square]]
           )
@@ -144,10 +149,10 @@ const useRook = (initalValue: any) => {
         payload: possibleOnX,
       });
     }
-  }, [state]);
+  }, [state, dispatchPossibleMoves]);
 
   function changeHandler(val: object) {
-    setState(val);
+    setState(val as RookState);
   }
 
   return [changeHandler];
