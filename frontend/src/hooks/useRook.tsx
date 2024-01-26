@@ -1,19 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
+import { TableContextObject } from "../context/TableContext";
 
 type PieceType = "Rook" | string;
 type SquareType = "empty" | string;
-type Table = Record<number, string>;
 
 interface RookState {
   id: number;
-  table: Table;
   piece: PieceType;
 }
 
 const useRook = (initialValue: RookState) => {
   const [state, setState] = useState<RookState>(initialValue);
   const { dispatchPossibleMoves } = useContext(PossibleMovesContextObject);
+  const { table } = useContext(TableContextObject);
 
   const findEmptySquares = (array: [number, SquareType][]): number[] => {
     const newArray: number[] = [];
@@ -93,9 +93,9 @@ const useRook = (initialValue: RookState) => {
           .filter((square) => square > state.id)
           .sort((a, b) => a - b)
           .map((square) =>
-            state.table[square] === "empty"
+            table[square] === "empty"
               ? [square, "empty"]
-              : [square, state.table[square]]
+              : [square, table[square]]
           )
       );
 
@@ -106,9 +106,9 @@ const useRook = (initialValue: RookState) => {
           .filter((square) => square < state.id)
           .sort((a, b) => b - a)
           .map((square) =>
-            state.table[square] === "empty"
+            table[square] === "empty"
               ? [square, "empty"]
-              : [square, state.table[square]]
+              : [square, table[square]]
           )
       );
       console.log("left side", possibleSquaresOnLeft);
@@ -118,9 +118,9 @@ const useRook = (initialValue: RookState) => {
           .filter((square) => square < state.id)
           .sort((a, b) => b - a)
           .map((square) =>
-            state.table[square] === "empty"
+            table[square] === "empty"
               ? [square, "empty"]
-              : [square, state.table[square]]
+              : [square, table[square]]
           )
       );
       console.log("up side", possibleSquaresOnUP);
@@ -130,9 +130,9 @@ const useRook = (initialValue: RookState) => {
           .filter((square) => square > state.id)
           .sort((a, b) => a - b)
           .map((square) =>
-            state.table[square] === "empty"
+            table[square] === "empty"
               ? [square, "empty"]
-              : [square, state.table[square]]
+              : [square, table[square]]
           )
       );
       console.log("down side", possibleSquaresOnDown);

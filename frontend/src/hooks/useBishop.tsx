@@ -1,20 +1,20 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
 import { chessboard } from "../data";
+import { TableContextObject } from "../context/TableContext";
 
 type PieceType = "Bishop" | string;
 type SquareType = "empty" | string;
 type Coordinate = [number, number];
-type Table = Record<number, string>;
 interface BishopState {
   id: number;
-  table: Table;
   piece: PieceType;
 }
 
 const useBishop = (initialValue: BishopState) => {
   const [state, setState] = useState<BishopState>(initialValue);
   const { dispatchPossibleMoves } = useContext(PossibleMovesContextObject);
+  const { table } = useContext(TableContextObject);
 
   const findEmptySquares = (array: [number, SquareType][]): number[] => {
     const newArray: number[] = [];
@@ -57,7 +57,7 @@ const useBishop = (initialValue: BishopState) => {
 
   useEffect(() => {
     if (state.piece.includes("Bishop")) {
-      console.log(`${state.table[state.id]} is selected`);
+      console.log(`${table[state.id]} is selected`);
 
       let x = chessboard[state.id][0];
       let y = chessboard[state.id][1];
@@ -99,31 +99,31 @@ const useBishop = (initialValue: BishopState) => {
 
       const possibleSouthEast = findEmptySquares(
         coordinateToIndex(southEast).map((square) =>
-          state.table[square] === "empty"
+          table[square] === "empty"
             ? [square, "empty"]
-            : [square, state.table[square]]
+            : [square, table[square]]
         )
       );
       const possibleNorthEast = findEmptySquares(
         coordinateToIndex(northEast).map((square) =>
-          state.table[square] === "empty"
+          table[square] === "empty"
             ? [square, "empty"]
-            : [square, state.table[square]]
+            : [square, table[square]]
         )
       );
 
       const possibleSouthWest = findEmptySquares(
         coordinateToIndex(southWest).map((square) =>
-          state.table[square] === "empty"
+          table[square] === "empty"
             ? [square, "empty"]
-            : [square, state.table[square]]
+            : [square, table[square]]
         )
       );
       const possibleNorthWest = findEmptySquares(
         coordinateToIndex(northWest).map((square) =>
-          state.table[square] === "empty"
+          table[square] === "empty"
             ? [square, "empty"]
-            : [square, state.table[square]]
+            : [square, table[square]]
         )
       );
       const possibleMoves = [

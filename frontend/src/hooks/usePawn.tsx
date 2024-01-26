@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
+import { TableContextObject } from "../context/TableContext";
 
 type PieceType = "Pawn" | string;
 type SquareType = "empty" | string;
@@ -7,13 +8,13 @@ type Table = Record<number, string>;
 
 interface PawnState {
   id: number;
-  table: Table;
   piece: PieceType;
 }
 
 const usePawn = (initialValue: PawnState) => {
   const [state, setState] = useState<PawnState>(initialValue);
   const { dispatchPossibleMoves } = useContext(PossibleMovesContextObject);
+  const { table } = useContext(TableContextObject);
 
   const findEmptySquares = (array: [number, SquareType][]): number[] => {
     const newArray: number[] = [];
@@ -27,7 +28,7 @@ const usePawn = (initialValue: PawnState) => {
 
   useEffect(() => {
     if (state.piece.includes("Pawn")) {
-      console.log(`${state.table[state.id]} is selected`);
+      console.log(`${table[state.id]} is selected`);
       let possibleMove: number[] = [];
       const possibleTakes: number[] = [];
       const copy = { ...state };
@@ -47,7 +48,7 @@ const usePawn = (initialValue: PawnState) => {
           possibleTakes.push(copy.id - 7);
         }
         var takes = possibleTakes.filter((square) =>
-          state.table[square].includes("black")
+          table[square].includes("black")
         );
       } else {
         if ([9, 10, 11, 12, 13, 14, 15, 16].includes(state.id)) {
@@ -67,15 +68,15 @@ const usePawn = (initialValue: PawnState) => {
         }
 
         var takes = possibleTakes.filter((square) =>
-          state.table[square].includes("white")
+          table[square].includes("white")
         );
       }
 
       const possibleMoves = findEmptySquares(
         possibleMove.map((square) =>
-          state.table[square] === "empty"
+          table[square] === "empty"
             ? [square, "empty"]
-            : [square, state.table[square]]
+            : [square, table[square]]
         )
       );
       const final = [...possibleMoves, ...takes];

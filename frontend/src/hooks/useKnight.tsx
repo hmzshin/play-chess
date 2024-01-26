@@ -1,21 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
 import { chessboard } from "../data";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
+import { TableContextObject } from "../context/TableContext";
 
 type PieceType = "Knight" | string;
 type SquareType = "empty" | string;
 type Coordinate = [number, number];
-type Table = Record<number, string>;
 
 interface KnightState {
   id: number;
-  table: Table;
   piece: PieceType;
 }
 
 const useKnight = (initialValue: KnightState) => {
   const [state, setState] = useState<KnightState>(initialValue);
   const { dispatchPossibleMoves } = useContext(PossibleMovesContextObject);
+  const { table } = useContext(TableContextObject);
 
   const findEmptySquares = (array: [number, SquareType][]): number[] => {
     const newArray: number[] = [];
@@ -41,7 +41,7 @@ const useKnight = (initialValue: KnightState) => {
 
   useEffect(() => {
     if (state.piece.includes("Knight")) {
-      console.log(`${state.table[state.id]} is selected`);
+      console.log(`${table[state.id]} is selected`);
 
       let x = chessboard[state.id][0];
       let y = chessboard[state.id][1];
@@ -107,9 +107,9 @@ const useKnight = (initialValue: KnightState) => {
 
       const filterPossibleMove = findEmptySquares(
         possibleMoves.map((square: any) =>
-          state.table[square] === "empty"
+          table[square] === "empty"
             ? [square, "empty"]
-            : [square, state.table[square]]
+            : [square, table[square]]
         )
       );
       dispatchPossibleMoves({

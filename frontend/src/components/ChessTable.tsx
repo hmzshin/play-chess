@@ -11,6 +11,8 @@ import useBishop from "../hooks/useBishop";
 import useQueen from "../hooks/useQueen";
 import useKing from "../hooks/useKing";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
+import { socket } from "../../socket";
+import { TableContextObject } from "../context/TableContext";
 
 type Table = Record<number, string>;
 
@@ -25,12 +27,10 @@ type PieceType =
   | string;
 interface Move {
   id: number;
-  table: Table;
   piece: PieceType;
 }
 
 const ChessTable: React.FC = () => {
-  const [table, setTable] = useState<Table>(initialTable);
   const [active, setActive] = useState<number>(0);
   const [click, setClick] = useState<{
     fisrtClick: boolean;
@@ -42,7 +42,6 @@ const ChessTable: React.FC = () => {
   const [move, setMove] = useState<Move>({
     id: 0,
     piece: "",
-    table: initialTable,
   });
   const [pawn] = usePawn(move);
   const [rook] = useRook(move);
@@ -55,6 +54,8 @@ const ChessTable: React.FC = () => {
     PossibleMovesContextObject
   );
   const [isMoved, setIsMoved] = useState<boolean>(false);
+
+  const { table, dispatchTable } = useContext(TableContextObject);
 
   function clickHandler(value: number) {
     setActive(value);
@@ -80,7 +81,7 @@ const ChessTable: React.FC = () => {
       const copy: Table = { ...table };
       copy[move.id] = "empty";
       copy[active] = move.piece;
-      setTable(copy);
+      dispatchTable({ type: "SET_TABLE", payload: copy });
       if (!isMoved) {
         setIsMoved(true);
       }
@@ -102,23 +103,19 @@ const ChessTable: React.FC = () => {
 
   useEffect(() => {
     if (move.piece.includes("Pawn")) {
-      pawn({ ...move, table: table });
+      pawn({ ...move });
     } else if (move.piece.includes("Rook")) {
-      rook({ ...move, table: table });
+      rook({ ...move });
     } else if (move.piece.includes("Knight")) {
-      knight({ ...move, table: table });
+      knight({ ...move });
     } else if (move.piece.includes("Bishop")) {
-      bishop({ ...move, table: table });
+      bishop({ ...move });
     } else if (move.piece.includes("Queen")) {
-      queen({ ...move, table: table });
+      queen({ ...move });
     } else if (move.piece.includes("King")) {
-      king({ ...move, table: table });
+      king({ ...move });
     }
   }, [move]);
-
-  useEffect(() => {
-    console.log(table);
-  }, [table]);
 
   return (
     <div className="flex items-center justify-center flex-wrap gap-20 p-[5%]">
