@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Timer from "./Timer";
 import "./ChessTable.css";
-import { initialTable, numbers } from "../data";
+import { numbers } from "../data";
 import Square from "./Square";
 import usePawn from "../hooks/usePawn";
 import useRook from "../hooks/useRook";
@@ -33,16 +33,20 @@ interface Move {
 interface ChessTableProps {
   username: string;
   room: string;
-  turn: string;
+  piece: string;
   isMyTurn: boolean;
   setIsMyTurn: Function;
+  isMoved: boolean;
+  setIsMoved: Function;
 }
 const ChessTable: React.FC<ChessTableProps> = ({
   username,
   room,
-  turn,
+  piece,
   isMyTurn,
   setIsMyTurn,
+  isMoved,
+  setIsMoved,
 }) => {
   const [active, setActive] = useState<number>(0);
   const [click, setClick] = useState<{
@@ -65,7 +69,6 @@ const ChessTable: React.FC<ChessTableProps> = ({
   const { possibleMoves, dispatchPossibleMoves } = useContext(
     PossibleMovesContextObject
   );
-  const [isMoved, setIsMoved] = useState<boolean>(false);
 
   const { table, dispatchTable } = useContext(TableContextObject);
 
@@ -90,33 +93,38 @@ const ChessTable: React.FC<ChessTableProps> = ({
       possibleMoves.includes(active) &&
       isMyTurn
     ) {
-      const copy: Table = { ...table };
-      copy[move.id] = "empty";
-      copy[active] = move.piece;
-      dispatchTable({ type: "SET_TABLE", payload: copy });
-      const data = {
-        username: username,
-        room: room,
-        table: copy,
-      };
-      socket.emit("sendMove", data);
-      setIsMyTurn(false);
-      if (!isMoved) {
-        setIsMoved(true);
+      if (move.piece.includes(piece)) {
+        const copy: Table = { ...table };
+        copy[move.id] = "empty";
+        copy[active] = move.piece;
+        dispatchTable({ type: "SET_TABLE", payload: copy });
+        const data = {
+          username: username,
+          room: room,
+          table: copy,
+        };
+        socket.emit("sendMove", data);
+        setIsMyTurn(false);
+        setActive(0);
+        if (!isMoved) {
+          setIsMoved(true);
+        }
+        dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
       }
-      dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
     } else if (
       click.secondClick === true &&
       possibleMoves.includes(active) &&
       !isMyTurn
     ) {
-      toast.warn(`It's ${turn} turn`);
+      toast.warn(`It's ${piece} piece`);
       dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
+      setActive(0);
     } else {
       dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
+      setActive(0);
     }
 
-    console.log("turn", turn);
+    console.log("piece", piece);
   }, [click]);
 
   useEffect(() => {
@@ -152,7 +160,7 @@ const ChessTable: React.FC<ChessTableProps> = ({
           />
         ))}
       </div>
-      <Timer turn={turn} isMyTurn={isMyTurn} isMoved={isMoved} />
+      <Timer piece={piece} isMyTurn={isMyTurn} isMoved={isMoved} />
     </div>
   );
 };

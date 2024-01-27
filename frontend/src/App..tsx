@@ -9,15 +9,16 @@ import { TableContextObject } from "./context/TableContext.tsx";
 function App() {
   const [username, setUsername] = useState<string>("");
   const [room, setRoom] = useState<string>("");
-  const [turn, setTurn] = useState<string>("");
+  const [piece, setPiece] = useState<string>("");
   const [isMyTurn, setIsMyTurn] = useState<boolean>(false);
+  const [isMoved, setIsMoved] = useState<boolean>(false);
   const { dispatchTable } = useContext(TableContextObject);
 
   function joinRoom(event: any) {
     event.preventDefault();
     if (username !== "" && room !== "") {
       socket.emit("joinRoom", room, (dataFromServer: string) => {
-        setTurn(dataFromServer);
+        setPiece(dataFromServer);
         setIsMyTurn(dataFromServer === "white" ? true : false);
         console.log(
           "socket id:" + socket.id + " is" + dataFromServer + " piece"
@@ -38,8 +39,15 @@ function App() {
       console.log("message is sended by : ", data.username);
       dispatchTable({ type: "SET_TABLE", payload: data.table });
       setIsMyTurn(true);
+      if (isMoved === false) {
+        setIsMoved(true);
+      }
     });
   }, [socket]);
+
+  useEffect(() => {
+    console.log("is it my piece:", isMyTurn);
+  }, [isMyTurn]);
 
   return (
     <>
@@ -70,9 +78,11 @@ function App() {
       <ChessTable
         username={username}
         room={room}
-        turn={turn}
+        piece={piece}
         isMyTurn={isMyTurn}
         setIsMyTurn={setIsMyTurn}
+        isMoved={isMoved}
+        setIsMoved={setIsMoved}
       />
     </>
   );

@@ -1,40 +1,70 @@
 import React, { useEffect, useState } from "react";
 
-const Timer = ({ turn, isMoved }) => {
+const Timer = ({ isMoved, isMyTurn, piece }) => {
   const [countWhite, setCountWhite] = useState(5 * 60 * 1000);
   const [countBlack, setCountBlack] = useState(5 * 60 * 1000);
 
   const players = [
-    { player: " White", timer: countBlack },
-    { player: " Black", timer: countWhite },
+    { player: " White", timer: countWhite },
+    { player: " Black", timer: countBlack },
   ];
   useEffect(() => {
     if (isMoved) {
       const timerId = setInterval(() => {
-        if (turn == "black") {
-          setCountWhite((prevCountWhite) => {
-            if (prevCountWhite === 0) {
-              clearInterval(timerId);
-              console.log(`Timing event cleared.`);
-              return 0;
+        switch (piece) {
+          case "white":
+            if (isMyTurn) {
+              console.log("timer started for", piece);
+              setCountWhite((prevCountWhite) => {
+                if (prevCountWhite === 0) {
+                  clearInterval(timerId);
+                  console.log(`Timing event cleared.`);
+                  return 0;
+                }
+                return prevCountWhite - 1000;
+              });
+            } else {
+              setCountBlack((prevCountBlack) => {
+                if (prevCountBlack === 0) {
+                  clearInterval(timerId);
+                  console.log(`Timing event cleared.`);
+                  return 0;
+                }
+                return prevCountBlack - 1000;
+              });
             }
-            return prevCountWhite - 1000;
-          });
-        } else {
-          setCountBlack((prevCountBlack) => {
-            if (prevCountBlack === 0) {
-              clearInterval(timerId);
-              console.log(`Timing event cleared.`);
-              return 0;
+            break;
+
+          case "black":
+            if (isMyTurn) {
+              setCountBlack((prevCountBlack) => {
+                if (prevCountBlack === 0) {
+                  clearInterval(timerId);
+                  console.log(`Timing event cleared.`);
+                  return 0;
+                }
+                return prevCountBlack - 1000;
+              });
+            } else {
+              setCountWhite((prevCountWhite) => {
+                if (prevCountWhite === 0) {
+                  clearInterval(timerId);
+                  console.log(`Timing event cleared.`);
+                  return 0;
+                }
+                return prevCountWhite - 1000;
+              });
             }
-            return prevCountBlack - 1000;
-          });
+            break;
+
+          default:
+            break;
         }
       }, 1000);
 
       return () => clearInterval(timerId);
     }
-  }, [turn, isMoved]);
+  }, [isMyTurn, piece, isMoved]);
 
   const formatTime = (milliseconds: number) => {
     const minutes: number = Math.floor(milliseconds / 60000);
