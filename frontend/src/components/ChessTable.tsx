@@ -13,6 +13,7 @@ import useKing from "../hooks/useKing";
 import { PossibleMovesContextObject } from "../context/PossibleMovesContext";
 import { socket } from "../../socket";
 import { TableContextObject } from "../context/TableContext";
+import { UserContextObject } from "../context/UserContext";
 
 type Table = Record<number, string>;
 
@@ -30,24 +31,7 @@ interface Move {
   piece: PieceType;
 }
 
-interface ChessTableProps {
-  username: string;
-  room: string;
-  piece: string;
-  isMyTurn: boolean;
-  setIsMyTurn: Function;
-  isMoved: boolean;
-  setIsMoved: Function;
-}
-const ChessTable: React.FC<ChessTableProps> = ({
-  username,
-  room,
-  piece,
-  isMyTurn,
-  setIsMyTurn,
-  isMoved,
-  setIsMoved,
-}) => {
+const ChessTable: React.FC = () => {
   const [active, setActive] = useState<number>(0);
   const [click, setClick] = useState<{
     fisrtClick: boolean;
@@ -71,6 +55,8 @@ const ChessTable: React.FC<ChessTableProps> = ({
   );
 
   const { table, dispatchTable } = useContext(TableContextObject);
+  const { user, dispatchUser } = useContext(UserContextObject);
+  const { username, room, piece, isMyTurn, isMoved } = user;
 
   function clickHandler(value: number) {
     setActive(value);
@@ -104,10 +90,10 @@ const ChessTable: React.FC<ChessTableProps> = ({
           table: copy,
         };
         socket.emit("sendMove", data);
-        setIsMyTurn(false);
+        dispatchUser({ type: "SET_ISMYTURN", payload: false });
         setActive(0);
         if (!isMoved) {
-          setIsMoved(true);
+          dispatchUser({ type: "SET_ISMOVED", payload: true });
         }
         dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
       }
@@ -155,8 +141,6 @@ const ChessTable: React.FC<ChessTableProps> = ({
             id={number}
             clickHandler={clickHandler}
             active={active}
-            table={table}
-            possible={possibleMoves}
           />
         ))}
       </div>
