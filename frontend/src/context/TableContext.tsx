@@ -33,7 +33,6 @@ const TableContextProvider: React.FC<TableContextProviderProps> = ({
   const dataReducer = (state: InitialData, action: Action): InitialData => {
     switch (action.type) {
       case "SET_TABLE":
-        console.log(action.payload);
         return action.payload;
 
       default:

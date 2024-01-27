@@ -30,7 +30,20 @@ interface Move {
   piece: PieceType;
 }
 
-const ChessTable: React.FC = () => {
+interface ChessTableProps {
+  username: string;
+  room: string;
+  turn: string;
+  isMyTurn: boolean;
+  setIsMyTurn: Function;
+}
+const ChessTable: React.FC<ChessTableProps> = ({
+  username,
+  room,
+  turn,
+  isMyTurn,
+  setIsMyTurn,
+}) => {
   const [active, setActive] = useState<number>(0);
   const [click, setClick] = useState<{
     fisrtClick: boolean;
@@ -49,7 +62,6 @@ const ChessTable: React.FC = () => {
   const [queen] = useQueen(move);
   const [king] = useKing(move);
   const [bishop] = useBishop(move);
-  const [turn, setTurn] = useState<string>("white");
   const { possibleMoves, dispatchPossibleMoves } = useContext(
     PossibleMovesContextObject
   );
@@ -72,25 +84,31 @@ const ChessTable: React.FC = () => {
 
   useEffect(() => {
     if (click.fisrtClick === true) {
-      setMove({ id: active, piece: table[active], table });
+      setMove({ id: active, piece: table[active] });
     } else if (
       click.secondClick === true &&
       possibleMoves.includes(active) &&
-      move.piece.includes(turn)
+      isMyTurn
     ) {
       const copy: Table = { ...table };
       copy[move.id] = "empty";
       copy[active] = move.piece;
       dispatchTable({ type: "SET_TABLE", payload: copy });
+      const data = {
+        username: username,
+        room: room,
+        table: copy,
+      };
+      socket.emit("sendMove", data);
+      setIsMyTurn(false);
       if (!isMoved) {
         setIsMoved(true);
       }
       dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
-      setTurn(turn === "white" ? "black" : "white");
     } else if (
       click.secondClick === true &&
       possibleMoves.includes(active) &&
-      !move.piece.includes(turn)
+      !isMyTurn
     ) {
       toast.warn(`It's ${turn} turn`);
       dispatchPossibleMoves({ type: "RESET_POSSIBLE_MOVES" });
@@ -134,7 +152,7 @@ const ChessTable: React.FC = () => {
           />
         ))}
       </div>
-      <Timer turn={turn} isMoved={isMoved} />
+      <Timer turn={turn} isMyTurn={isMyTurn} isMoved={isMoved} />
     </div>
   );
 };

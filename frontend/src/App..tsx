@@ -1,24 +1,79 @@
 import "./App.css";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Header from "./components/Header.tsx";
 import ChessTable from "./components/ChessTable.tsx";
-import { io } from "socket.io-client";
 import { toast } from "react-toastify";
+import { socket } from "../socket.ts";
+import { TableContextObject } from "./context/TableContext.tsx";
 
 function App() {
+  const [username, setUsername] = useState<string>("");
+  const [room, setRoom] = useState<string>("");
+  const [turn, setTurn] = useState<string>("");
+  const [isMyTurn, setIsMyTurn] = useState<boolean>(false);
+  const { dispatchTable } = useContext(TableContextObject);
+
+  function joinRoom(event: any) {
+    event.preventDefault();
+    if (username !== "" && room !== "") {
+      socket.emit("joinRoom", room, (dataFromServer: string) => {
+        setTurn(dataFromServer);
+        setIsMyTurn(dataFromServer === "white" ? true : false);
+        console.log(
+          "socket id:" + socket.id + " is" + dataFromServer + " piece"
+        );
+      });
+      window.alert("odaya katıl");
+    }
+  }
+
   useEffect(() => {
-    const socket = io("http://localhost:3000");
     socket.on("connect", () => {
-      toast.success(`You connected with id ${socket.id}`);
-      console.log(socket.id);
+      toast.success("Succesfully connected");
     });
-    socket.emit("customEvent", 10, "Hello");
   }, []);
+
+  useEffect(() => {
+    socket.on("receiveMove", (data) => {
+      console.log("message is sended by : ", data.username);
+      dispatchTable({ type: "SET_TABLE", payload: data.table });
+      setIsMyTurn(true);
+    });
+  }, [socket]);
 
   return (
     <>
+      <form onSubmit={joinRoom} className="flex justify-center items-center">
+        <label>
+          Username:
+          <input
+            type="text"
+            onChange={(e) => setUsername(e.target.value)}
+            className="border"
+          />
+        </label>
+        <label>
+          Room:
+          <input
+            type="text"
+            onChange={(e) => setRoom(e.target.value)}
+            className="border"
+          />
+        </label>
+
+        <button type="submit" className="flex h-10 p-2 bg-sky-200">
+          {" "}
+          Join room
+        </button>
+      </form>
       <Header />
-      <ChessTable />
+      <ChessTable
+        username={username}
+        room={room}
+        turn={turn}
+        isMyTurn={isMyTurn}
+        setIsMyTurn={setIsMyTurn}
+      />
     </>
   );
 }
